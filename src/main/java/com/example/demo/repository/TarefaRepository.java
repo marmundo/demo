@@ -9,12 +9,10 @@ import java.util.stream.Collectors;
 @Repository
 public class TarefaRepository {
     private final Map<Long, Tarefa> banco = new LinkedHashMap<>();
-    private final AtomicLong sequencia = new AtomicLong();
-    public Tarefa salvar(String titulo) {
-        System.out.println("[REPOSITORY] Salvando tarefa em memória: " + titulo);
-        Long id = sequencia.incrementAndGet();
-        Tarefa tarefa = new Tarefa(id, titulo, false);
-        banco.put(id, tarefa);
+
+    public Tarefa salvar(Tarefa tarefa) {
+        System.out.println("[REPOSITORY] Salvando tarefa em memória: " + tarefa.getTitulo());
+        banco.put(tarefa.getId(),tarefa);
         return tarefa;
     }
     public List<Tarefa> listarTodas() {
