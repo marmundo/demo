@@ -20,13 +20,8 @@ public class UsuarioService {
 
 
     public UsuarioResponseDTO criar(UsuarioResponseDTO dto) {
-        String titulo=dto.titulo();
-        Usuario usuario = new Usuario(sequencia.incrementAndGet(),dto.titulo(),dto.descricao(),null);
-        System.out.println("[SERVICE] Validando regra de negócio para: " +
-                titulo);
-        if (titulo == null || titulo.isBlank()) {
-            throw new IllegalArgumentException("O título da usuario não pode ser vazio.");
-        }
+
+        Usuario usuario = new Usuario(sequencia.incrementAndGet(),dto.nome(),dto.email(),dto.cargo());
         Usuario salva= repository.salvar(usuario);
         return toResponseDTO(salva);
     }
@@ -50,7 +45,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));
     }
 
-    public UsuarioResponseDTO atualizar(Long id, UsuarioResquestDTO usuarioResquestDTO) {
+    public Usuario atualizar(Long id, UsuarioResquestDTO usuarioResquestDTO) {
         System.out.println("[SERVICE] Processando busca por id: " + id);
         return repository.buscarPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));

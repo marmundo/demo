@@ -40,7 +40,7 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody UsuarioResquestDTO corpo) {
         System.out.println("Atualizando usuario com id" + id);
-        return ResponseEntity.ok(service.criar(service.atualizar(id, new UsuarioResquestDTO(corpo.nome(), corpo.email(), corpo.cargo()))));
+        return ResponseEntity.ok(service.atualizar(id,new UsuarioResquestDTO( corpo.nome(), corpo.email(), corpo.cargo())));
     }
 
     @DeleteMapping("/{id}")
