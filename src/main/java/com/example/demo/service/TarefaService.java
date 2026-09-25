@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.TaskRequestDTO;
+import com.example.demo.dto.UsuarioResquestDTO;
 import com.example.demo.dto.TaskResponseDTO;
 import com.example.demo.model.Tarefa;
 import com.example.demo.repository.TarefaRepository;
@@ -19,7 +19,7 @@ public class TarefaService {
     }
 
 
-    public TaskResponseDTO criar(TaskRequestDTO dto) {
+    public TaskResponseDTO criar(UsuarioResquestDTO dto) {
         String titulo=dto.titulo();
         Tarefa tarefa = new Tarefa(sequencia.incrementAndGet(),dto.titulo(),dto.descricao(),null);
         System.out.println("[SERVICE] Validando regra de negócio para: " +
