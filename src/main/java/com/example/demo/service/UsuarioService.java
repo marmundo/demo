@@ -19,7 +19,7 @@ public class UsuarioService {
     }
 
 
-    public UsuarioResponseDTO criar(UsuarioResponseDTO dto) {
+    public UsuarioResponseDTO criar(UsuarioResquestDTO dto) {
 
         Usuario usuario = new Usuario(sequencia.incrementAndGet(),dto.nome(),dto.email(),dto.cargo());
         Usuario salva= repository.salvar(usuario);
@@ -52,6 +52,6 @@ public class UsuarioService {
     }
 
     public Usuario deletar(Long id) {
-        return repository.deletar(id).orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));
+        return (Usuario) repository.deletar(id).orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));
     }
 }

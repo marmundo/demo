@@ -1,42 +1,24 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 
+@Entity
+@Table(name="tarefas")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Tarefa {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false, length = 100)
     private String titulo;
-    private String descricao;
-    private LocalDate prazo;
     private boolean concluida;
-    private String prioridade;
+    @Enumerated(EnumType.STRING)
+    private Prioridade prioridade;
 
-    public Tarefa(Long id, String titulo, String descricao, LocalDate prazo) {
-        this.id = id;
-        this.titulo = titulo;
-        this.descricao=descricao;
-        this.prazo=prazo;
-        this.concluida = false;
-        this.prioridade="alta";
-        System.out.println("Criando Tarefa...");
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public boolean isConcluida() {
-        return concluida;
-    }
-
-    public String getPrioridade(){
-        return this.prioridade;
-    }
-
-    public void setConcluida(boolean concluida) {
-        this.concluida = concluida;
-    }
 }

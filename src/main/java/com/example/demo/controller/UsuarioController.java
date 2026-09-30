@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.TaskResponseDTO;
 import com.example.demo.dto.UsuarioResponseDTO;
 import com.example.demo.dto.UsuarioResquestDTO;
 import com.example.demo.model.Usuario;

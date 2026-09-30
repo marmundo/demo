@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.UsuarioResquestDTO;
+import com.example.demo.dto.TaskRequestDTO;
 import com.example.demo.dto.TaskResponseDTO;
 import com.example.demo.model.Tarefa;
 import com.example.demo.service.TarefaService;
@@ -18,7 +18,7 @@ public class TarefaController {
         this.service = service;
     }
     @PostMapping
-    public ResponseEntity<TaskResponseDTO> criar(@RequestBody UsuarioResquestDTO corpo) {
+    public ResponseEntity<TaskResponseDTO> criar(@RequestBody TaskRequestDTO corpo) {
      TaskResponseDTO criada=service.criar(corpo);
      return ResponseEntity.status(HttpStatus.CREATED).body(criada);
     }
