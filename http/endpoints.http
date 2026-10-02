@@ -1,1 +1,76 @@
-http://localhost:8080/tarefas
+### Listar todas as tarefas (200)
+GET http://localhost:8080/tarefas
+
+###
+
+### Criar tarefa (201)
+POST http://localhost:8080/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Estudar Spring Boot",
+  "descricao": "Revisar controller, service e DTO",
+  "prazo": "2026-10-15"
+}
+
+###
+
+### Criar segunda tarefa (201)
+POST http://localhost:8080/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Fazer exercícios de JPA",
+  "descricao": "Mapear entidades e repositórios",
+  "prazo": "2026-10-20"
+}
+
+###
+
+### Criar tarefa sem descrição nem prazo (valida campos opcionais)
+POST http://localhost:8080/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Tarefa mínima"
+}
+
+###
+
+### Criar tarefa com corpo vazio (valida tratamento de dados inválidos)
+POST http://localhost:8080/tarefas
+Content-Type: application/json
+
+{}
+
+###
+
+### Criar tarefa com data em formato inválido (esperado: 400)
+POST http://localhost:8080/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Prazo inválido",
+  "descricao": "Data fora do formato yyyy-MM-dd",
+  "prazo": "15/10/2026"
+}
+
+###
+
+### Buscar tarefa por id existente (200)
+GET http://localhost:8080/tarefas/1
+
+###
+
+### Buscar tarefa por id inexistente (esperado: 404)
+GET http://localhost:8080/tarefas/9999
+
+###
+
+### Buscar tarefa com id não numérico (esperado: 400)
+GET http://localhost:8080/tarefas/abc
+
+###
+
+### Listar tarefas concluídas (200)
+GET http://localhost:8080/tarefas/concluidos
