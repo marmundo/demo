@@ -9,9 +9,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Camada de SERVICE para usuários: regras de negócio e conversão entre modelo e DTO.
+ * @Service registra a classe como bean gerenciado pelo Spring.
+ */
 @Service
 public class UsuarioService {
+    // O atributo usa a interface (abstração); o construtor recebe a implementação concreta
     private final UsuarioRepository repository;
+    // Gerador de ids sequenciais, seguro para uso concorrente
     private final AtomicLong sequencia = new AtomicLong();
 
     public UsuarioService(InMemoryUsuarioRepository repository) {
@@ -19,6 +25,7 @@ public class UsuarioService {
     }
 
 
+    // Cria o usuário: o id é gerado aqui, nunca recebido do cliente
     public UsuarioResponseDTO criar(UsuarioResquestDTO dto) {
 
         Usuario usuario = new Usuario(sequencia.incrementAndGet(),dto.nome(),dto.email(),dto.cargo());
@@ -26,6 +33,7 @@ public class UsuarioService {
         return toResponseDTO(salva);
     }
 
+    // Converte o modelo em DTO de resposta
     private UsuarioResponseDTO toResponseDTO(Usuario usuario) {
         return new UsuarioResponseDTO(
                 usuario.getId(),
@@ -39,6 +47,8 @@ public class UsuarioService {
         System.out.println("[SERVICE] Solicitando lista de usuarios ao repository");
         return repository.listarTodas();
     }
+
+    // Lança exceção se o usuário não existir
     public Usuario buscarPorId(Long id) {
         System.out.println("[SERVICE] Processando busca por id: " + id);
         return repository.buscarPorId(id)
@@ -51,6 +61,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));
     }
 
+    // Remove e devolve o usuário; se o id não existir, lança exceção
     public Usuario deletar(Long id) {
         return (Usuario) repository.deletar(id).orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));
     }

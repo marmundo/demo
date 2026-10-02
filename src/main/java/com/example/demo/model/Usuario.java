@@ -1,4 +1,11 @@
 package com.example.demo.model;
+
+/**
+ * Modelo de domínio de Usuario escrito "à mão" (POJO), sem Lombok e sem JPA.
+ * Serve de comparação com a entidade Tarefa: aqui todo o código de construtor,
+ * getters e setters é escrito manualmente; na Tarefa o Lombok o gera automaticamente.
+ * Os usuários ficam apenas em memória (ver InMemoryUsuarioRepository).
+ */
 public class Usuario {
     private Long id;
     private String nome;
