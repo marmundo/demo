@@ -10,6 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 /**
@@ -61,5 +65,11 @@ public class TarefaController {
     public ResponseEntity<TaskResponseDTO> buscar(@PathVariable Long id) {
         log.info("[CONTROLLER] Requisição recebida: GET /tarefas/" + id);
         return ResponseEntity.ok(service.buscarPorId(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponseDTO> atualizar(@PathVariable Long id, @RequestBody TaskRequestDTO corpo) {
+        log.info("[CONTROLLER] Requisição recebida: PUT /tarefas/" + id);
+        return ResponseEntity.ok(service.atualizar(id, corpo));
     }
 }

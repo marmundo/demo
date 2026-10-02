@@ -2,6 +2,8 @@ package com.example.demo.dto;
 
 import java.time.LocalDate;
 
+import com.example.demo.model.Prioridade;
+
 /**
  * DTO (Data Transfer Object) de ENTRADA: define quais campos o cliente pode enviar
  * ao criar uma tarefa. Fica separado da entidade Tarefa para que a API não dependa
@@ -13,5 +15,7 @@ import java.time.LocalDate;
 public record TaskRequestDTO(
         String titulo,
         String descricao,
-        LocalDate prazo
+        LocalDate prazo,
+        Prioridade prioridade,
+        boolean concluida
 ) {}

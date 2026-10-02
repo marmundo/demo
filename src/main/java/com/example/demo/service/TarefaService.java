@@ -88,4 +88,22 @@ public class TarefaService {
         }
         return tarefasConcluidas;
     }
+
+    public TaskResponseDTO atualizar(Long id, TaskRequestDTO dto) {
+        log.info("[SERVICE] Processando atualização da tarefa com id: {}", id);
+        Tarefa tarefaExistente = repository.buscarPorId(id)
+                .orElseThrow(() -> new TarefaNaoEncontradaException(id));
+
+        // Atualiza os campos da tarefa existente com os valores do DTO
+        tarefaExistente.setTitulo(dto.titulo());
+        // Se o DTO tiver prioridade, atualiza; caso contrário, mantém a existente
+        if (dto.prioridade() != null) {
+            tarefaExistente.setPrioridade(dto.prioridade());
+        }
+        // Atualiza o status de conclusão se fornecido
+        tarefaExistente.setConcluida(dto.concluida());
+
+        Tarefa atualizada = repository.salvar(tarefaExistente);
+        return toResponseDTO(atualizada);
+    }
 }
