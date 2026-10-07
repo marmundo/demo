@@ -1,53 +1,41 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Modelo de domínio de Usuario escrito "à mão" (POJO), sem Lombok e sem JPA.
- * Serve de comparação com a entidade Tarefa: aqui todo o código de construtor,
- * getters e setters é escrito manualmente; na Tarefa o Lombok o gera automaticamente.
- * Os usuários ficam apenas em memória (ver InMemoryUsuarioRepository).
+ * Entidade JPA que representa um usuário (linha da tabela "usuarios").
+ * Lado "um" da relação com Tarefa: um usuário tem várias tarefas.
  */
+@Entity
+@Table(name = "usuarios")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nome;
     private String email;
     private String cargo;
 
-    public Usuario(Long id, String nome, String email, String cargo) {
-        this.id = id;
+    // Lado inverso da relação: "usuario" é o atributo de Tarefa que guarda a chave estrangeira.
+    // @JsonIgnore evita loop infinito (Usuario -> Tarefa -> Usuario) ao serializar em JSON.
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
+    private List<Tarefa> tarefas = new ArrayList<>();
+
+    // Construtor de conveniência (sem id, que é gerado pelo banco).
+    // O construtor vazio, exigido pelo JPA, vem do @NoArgsConstructor.
+    public Usuario(String nome, String email, String cargo) {
         this.nome = nome;
         this.email = email;
-        this.cargo = cargo;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getCargo() {
-        return cargo;
-    }
-
-    public void setCargo(String cargo) {
         this.cargo = cargo;
     }
 }

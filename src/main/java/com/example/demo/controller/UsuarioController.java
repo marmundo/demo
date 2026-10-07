@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.dto.UsuarioResponseDTO;
 import com.example.demo.dto.UsuarioResquestDTO;
 import com.example.demo.model.Usuario;
+import com.example.demo.dto.TaskResponseDTO;
+import com.example.demo.service.TarefaService;
 import com.example.demo.service.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/usuarios")
 public class UsuarioController {
     private final UsuarioService service;
+    private final TarefaService tarefaService;
 
     // Injeção de dependência via construtor
-    public UsuarioController(UsuarioService service) {
+    public UsuarioController(UsuarioService service, TarefaService tarefaService) {
         this.service = service;
+        this.tarefaService = tarefaService;
     }
 
     // POST /usuarios -> cria um usuário e responde 201 (Created)
@@ -45,6 +49,13 @@ public class UsuarioController {
     public ResponseEntity<Usuario> buscar(@PathVariable Long id) {
         log.info("[CONTROLLER] Requisição recebida: GET /tarefas/" + id);
         return ResponseEntity.ok(service.buscarPorId(id));
+    }
+
+    // GET /usuarios/{id}/tarefas -> lista as tarefas do usuário
+    @GetMapping("/{id}/tarefas")
+    public ResponseEntity<List<TaskResponseDTO>> listarTarefas(@PathVariable Long id) {
+        log.info("[CONTROLLER] Requisição recebida: GET /usuarios/" + id + "/tarefas");
+        return ResponseEntity.ok(tarefaService.listarPorUsuario(id));
     }
 
     // PUT /usuarios/{id} -> atualiza um usuário (id vem da URL, novos dados vêm no corpo JSON)

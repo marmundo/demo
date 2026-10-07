@@ -2,21 +2,10 @@ package com.example.demo.repository;
 
 import com.example.demo.model.Usuario;
 
-import java.util.List;
-import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * Contrato (interface) de acesso aos dados de Usuario.
- * O Service depende desta abstração, não de como os dados são guardados:
- * é possível trocar a implementação em memória por uma com banco de dados
- * sem alterar a regra de negócio.
- *
- * Optional indica que o resultado pode não existir, evitando retornar null.
+ * Acesso aos dados de Usuario; a implementação é gerada pelo Spring Data JPA.
  */
-public interface UsuarioRepository {
-    public Usuario salvar(Usuario usuario);
-    public List<Usuario> listarTodas();
-    public Optional<Usuario> buscarPorId(Long id);
-    public Optional<Usuario> deletar(Long id);
-    public Usuario atualizar(Usuario usuario);
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 }
