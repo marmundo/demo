@@ -26,6 +26,13 @@ public class TratadorDeExcecoes {
         return resposta(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
+    // 404: usuário ou prioridade referenciado não existe
+    @ExceptionHandler(RecursoNaoEncontradoException.class)
+    public ResponseEntity<Map<String, String>> recursoNaoEncontrado(RecursoNaoEncontradoException e) {
+        log.warn("[ERRO] {}", e.getMessage());
+        return resposta(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
     // 400: regra de negócio violada (ex.: título vazio)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> argumentoInvalido(IllegalArgumentException e) {
