@@ -30,9 +30,16 @@ public class Tarefa {
     // Toda tarefa nasce como não concluída
     private boolean concluida=false;
 
-    // EnumType.STRING grava o nome ("ALTA") no banco, e não a posição (2),
-    // o que evita quebrar os dados se a ordem do enum mudar
-    @Enumerated(EnumType.STRING)
+    // Muitas tarefas -> uma prioridade (@ManyToOne). A coluna prioridade_id é a chave estrangeira.
+    // Tarefa é o lado "dono" da relação: é aqui que fica o @JoinColumn.
+    // LAZY: a Prioridade só é buscada no banco quando for realmente usada (melhor desempenho).
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "prioridade_id")
     private Prioridade prioridade;
+
+    // Muitas tarefas -> um usuário (responsável). Opcional: a tarefa pode não ter dono.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
 }

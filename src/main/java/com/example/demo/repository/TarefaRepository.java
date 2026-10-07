@@ -2,36 +2,20 @@ package com.example.demo.repository;
 
 import com.example.demo.model.Tarefa;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import org.springframework.stereotype.Repository;
-import java.util.*;
+import java.util.List;
 
 /**
- * Camada de REPOSITORY: responsável apenas por guardar e recuperar tarefas.
- * Guarda as tarefas em um Map em memória.
+ * Camada de REPOSITORY: o Spring Data JPA gera a implementação em tempo de execução.
+ * Já herda save, findAll, findById, deleteById etc.; as consultas abaixo são
+ * derivadas do nome do método.
  */
-@Slf4j 
-@Repository
-public class TarefaRepository {
-    // "Banco de dados" simulado: chave = id da tarefa. LinkedHashMap preserva a ordem de inserção.
-    private final Map<Long, Tarefa> banco = new LinkedHashMap<>();
+public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
+    // Query derivada: findBy + Concluida + True  ->  WHERE concluida = true
+    List<Tarefa> findByConcluidaTrue();
 
-    public Tarefa salvar(Tarefa tarefa) {
-        log.info("[REPOSITORY] Salvando tarefa em memória: " + tarefa.getTitulo());
-        banco.put(tarefa.getId(),tarefa);
-        return tarefa;
-    }
-
-    // Devolve uma cópia da lista para proteger o mapa interno
-    public List<Tarefa> listarTodas() {
-        log.info("[REPOSITORY] Buscando todas as tarefas em memória");
-        return new ArrayList<>(banco.values());
-    }
-
-    // Optional vazio quando o id não existe; o Service decide o que fazer nesse caso
-    public Optional<Tarefa> buscarPorId(Long id) {
-        log.info("[REPOSITORY] Buscando tarefa por id: " + id);
-        return Optional.ofNullable(banco.get(id));
-    }
+    // Navega pela relação: findBy + Usuario + Id -> tarefa.getUsuario().getId(),
+    // que no SQL vira WHERE usuario_id = ?
+    List<Tarefa> findByUsuarioId(Long usuarioId);
 }
