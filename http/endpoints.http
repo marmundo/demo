@@ -74,3 +74,43 @@ GET http://localhost:8080/tarefas/abc
 
 ### Listar tarefas concluídas (200)
 GET http://localhost:8080/tarefas/concluidos
+
+###
+
+### Criar usuário (201)
+POST http://localhost:8080/usuarios
+Content-Type: application/json
+
+{
+  "nome": "Maria",
+  "email": "maria@example.com",
+  "cargo": "Desenvolvedora"
+}
+
+###
+
+### Criar tarefa com usuário e prioridade ALTA (prioridadeId 3) (201)
+POST http://localhost:8080/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Implementar relacionamento",
+  "usuarioId": 1,
+  "prioridadeId": 3
+}
+
+###
+
+### Criar tarefa com usuário inexistente (esperado: 404)
+POST http://localhost:8080/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Usuário inválido",
+  "usuarioId": 9999
+}
+
+###
+
+### Listar tarefas do usuário (200)
+GET http://localhost:8080/usuarios/1/tarefas
