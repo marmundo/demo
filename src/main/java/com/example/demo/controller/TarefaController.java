@@ -40,4 +40,10 @@ public class TarefaController {
         System.out.println("[CONTROLLER] Requisição recebida: GET /tarefas/" + id);
         return ResponseEntity.ok(service.buscarPorId(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponseDTO> atualizar(@PathVariable Long id, @RequestBody TaskRequestDTO corpo ){
+        System.out.println("[Controller] Requisição recebida: PUT /tarefas/\" + id");
+        return ResponseEntity.ok(service.atualizar(id,corpo));
+    }
 }

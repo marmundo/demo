@@ -21,4 +21,8 @@ public class Tarefa {
     @Enumerated(EnumType.STRING)
     private Prioridade prioridade;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Usuario usuario;
+
 }

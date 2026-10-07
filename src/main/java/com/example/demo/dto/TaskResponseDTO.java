@@ -4,5 +4,5 @@ public record TaskResponseDTO(
         Long id,
         String titulo,
         boolean concluida,
-        String prioridade
+        com.example.demo.model.Prioridade prioridade
 ) {}
