@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
 
 
 /**
@@ -27,8 +28,10 @@ public class UsuarioController {
     }
 
     // POST /usuarios -> cria um usuário e responde 201 (Created)
+    // @Valid ativa a Bean Validation sobre o UsuarioResquestDTO (regras declaradas no próprio DTO).
+    // Dados inválidos resultam em 400 sem que o Service seja chamado.
     @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> criar(@RequestBody UsuarioResquestDTO corpo) {
+    public ResponseEntity<UsuarioResponseDTO> criar(@Valid @RequestBody UsuarioResquestDTO corpo) {
         UsuarioResponseDTO criada = service.criar(corpo);
         return ResponseEntity.status(HttpStatus.CREATED).body(criada);
     }
@@ -48,8 +51,9 @@ public class UsuarioController {
     }
 
     // PUT /usuarios/{id} -> atualiza um usuário (id vem da URL, novos dados vêm no corpo JSON)
+    // @Valid também aqui: sem ele, a atualização aceitaria dados que o POST rejeita.
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody UsuarioResquestDTO corpo) {
+    public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @Valid @RequestBody UsuarioResquestDTO corpo) {
         log.info("[CONTROLLER] Requisição recebida: PUT /tarefas/" + id);
         return ResponseEntity.ok(service.atualizar(id,new UsuarioResquestDTO( corpo.nome(), corpo.email(), corpo.cargo())));
     }

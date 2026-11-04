@@ -74,3 +74,47 @@ GET http://localhost:8080/tarefas/abc
 
 ### Listar tarefas concluídas (200)
 GET http://localhost:8080/tarefas/concluidos
+
+###
+
+### Bean Validation: tarefa com título em branco (esperado: 400 com "campos")
+POST http://localhost:8080/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "   "
+}
+
+###
+
+### Bean Validation: tarefa com prazo no passado (esperado: 400)
+POST http://localhost:8080/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Prazo vencido",
+  "prazo": "2020-01-01"
+}
+
+###
+
+### Bean Validation: usuário com vários campos inválidos (esperado: 400)
+POST http://localhost:8080/usuarios
+Content-Type: application/json
+
+{
+  "nome": "A",
+  "email": "nao-e-email"
+}
+
+###
+
+### Bean Validation: usuário válido (201)
+POST http://localhost:8080/usuarios
+Content-Type: application/json
+
+{
+  "nome": "Maria Silva",
+  "email": "maria@exemplo.com",
+  "cargo": "Analista"
+}

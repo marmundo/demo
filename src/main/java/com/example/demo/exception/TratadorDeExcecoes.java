@@ -4,10 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,6 +33,22 @@ public class TratadorDeExcecoes {
     public ResponseEntity<Map<String, String>> argumentoInvalido(IllegalArgumentException e) {
         log.warn("[ERRO] {}", e.getMessage());
         return resposta(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    // 400: falha na Bean Validation (@Valid no controller).
+    // O Spring lança MethodArgumentNotValidException com TODAS as violações encontradas.
+    // Montamos um mapa campo -> mensagem para o cliente corrigir tudo de uma vez, ex.:
+    // {"erro": "Dados inválidos.", "campos": {"email": "O e-mail informado é inválido."}}
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> validacao(MethodArgumentNotValidException e) {
+        Map<String, String> campos = new LinkedHashMap<>();
+        // Cada FieldError traz o nome do campo e a "message" definida na anotação.
+        // putIfAbsent: se um campo violar mais de uma regra, guarda só a primeira mensagem.
+        e.getBindingResult().getFieldErrors()
+                .forEach(erro -> campos.putIfAbsent(erro.getField(), erro.getDefaultMessage()));
+        log.warn("[ERRO] Validação falhou: {}", campos);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("erro", "Dados inválidos.", "campos", campos));
     }
 
     // 400: JSON malformado ou data em formato inválido

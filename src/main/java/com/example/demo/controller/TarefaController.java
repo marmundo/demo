@@ -4,6 +4,7 @@ import com.example.demo.dto.TaskRequestDTO;
 import com.example.demo.dto.TaskResponseDTO;
 import com.example.demo.service.TarefaService;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
@@ -37,9 +38,11 @@ public class TarefaController {
 
     // POST /tarefas -> cria uma tarefa.
     // @RequestBody converte o JSON do corpo da requisição em um TaskRequestDTO.
+    // @Valid manda o Spring validar o DTO conforme as anotações dele (@NotBlank, @Size...)
+    // ANTES de executar este método. Se houver erro, o método nem é chamado: responde 400.
     // Responde com 201 (Created) e a tarefa criada no corpo.
     @PostMapping
-    public ResponseEntity<TaskResponseDTO> criar(@RequestBody TaskRequestDTO corpo) {
+    public ResponseEntity<TaskResponseDTO> criar(@Valid @RequestBody TaskRequestDTO corpo) {
      TaskResponseDTO criada=service.criar(corpo);
      return ResponseEntity.status(HttpStatus.CREATED).body(criada);
     }
@@ -67,8 +70,9 @@ public class TarefaController {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+    // No PUT também usamos @Valid: a mesma regra vale para criar e para atualizar.
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> atualizar(@PathVariable Long id, @RequestBody TaskRequestDTO corpo) {
+    public ResponseEntity<TaskResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody TaskRequestDTO corpo) {
         log.info("[CONTROLLER] Requisição recebida: PUT /tarefas/" + id);
         return ResponseEntity.ok(service.atualizar(id, corpo));
     }
