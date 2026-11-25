@@ -19,4 +19,5 @@ public interface UsuarioRepository {
     public Optional<Usuario> buscarPorId(Long id);
     public Optional<Usuario> deletar(Long id);
     public Usuario atualizar(Usuario usuario);
+    public Optional<Usuario> findByEmail(String email);
 }
