@@ -20,7 +20,7 @@ public class InMemoryUsuarioRepository implements UsuarioRepository{
 
     // "Banco de dados" simulado: chave = id, valor = usuário.
     // LinkedHashMap mantém a ordem de inserção ao listar.
-    private final Map<Long, Usuario> banco = new LinkedHashMap<>();
+    private final Map<UUID, Usuario> banco = new LinkedHashMap<>();
 
     // Insere (ou substitui, se o id já existir) o usuário no mapa
     public Usuario salvar(Usuario usuario) {

@@ -1,12 +1,18 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "usuarios")
+@Setter
 // UserDetails é o "contrato" que o Spring Security entende para representar um usuário.
 // Implementando-o, a própria entidade pode ser usada na autenticação, sem classe adaptadora.
 public class Usuario implements UserDetails {
@@ -48,4 +54,5 @@ public class Usuario implements UserDetails {
     public UUID getId() { return id; }
     public String getNome() { return nome; }
     public Perfil getPerfil() { return perfil; }
+    public String getEmail(){return email;}
 }

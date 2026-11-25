@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import java.time.LocalDate;
+import com.example.demo.model.Perfil;
 
 /**
  * DTO de ENTRADA para criar/atualizar um usuário (o id é gerado pelo servidor, não vem do cliente).
@@ -8,5 +8,6 @@ import java.time.LocalDate;
 public record UsuarioResquestDTO(
         String nome,
         String email,
-        String cargo
+        String senha,
+        Perfil perfil
 ) {}

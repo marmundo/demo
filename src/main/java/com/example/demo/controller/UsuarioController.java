@@ -51,7 +51,7 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody UsuarioResquestDTO corpo) {
         log.info("[CONTROLLER] Requisição recebida: PUT /tarefas/" + id);
-        return ResponseEntity.ok(service.atualizar(id,new UsuarioResquestDTO( corpo.nome(), corpo.email(), corpo.cargo())));
+        return ResponseEntity.ok(service.atualizar(id,new UsuarioResquestDTO( corpo.nome(), corpo.email(), corpo.senha(),corpo.perfil())));
     }
 
     // DELETE /usuarios/{id} -> remove o usuário e devolve o registro removido

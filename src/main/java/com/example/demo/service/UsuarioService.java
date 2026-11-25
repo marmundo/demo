@@ -34,7 +34,7 @@ public class UsuarioService {
     // Cria o usuário: o id é gerado aqui, nunca recebido do cliente
     public UsuarioResponseDTO criar(UsuarioResquestDTO dto) {
 
-        Usuario usuario = new Usuario(sequencia.incrementAndGet(),dto.nome(),dto.email(),dto.cargo());
+        Usuario usuario = new Usuario(dto.nome(),dto.email(),dto.senha(),dto.perfil());
         Usuario salva= repository.salvar(usuario);
         return toResponseDTO(salva);
     }
@@ -45,7 +45,7 @@ public class UsuarioService {
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getEmail(),
-                usuario.getCargo()
+                usuario.getPerfil()
         );
     }
 
@@ -71,7 +71,6 @@ public class UsuarioService {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));
         usuarioExistente.setNome(usuarioResquestDTO.nome());
         usuarioExistente.setEmail(usuarioResquestDTO.email());
-        usuarioExistente.setCargo(usuarioResquestDTO.cargo());
         return repository.atualizar(usuarioExistente);
     }
 
