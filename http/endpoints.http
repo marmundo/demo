@@ -10,7 +10,9 @@ Content-Type: application/json
 {
   "titulo": "Estudar Spring Boot",
   "descricao": "Revisar controller, service e DTO",
-  "prazo": "2026-10-15"
+  "prazo": "2026-10-15",
+  "prioridade": "BAIXA",
+  "concluida": false
 }
 
 ###
