@@ -29,6 +29,18 @@ public class InMemoryUsuarioRepository implements UsuarioRepository{
         return usuario;
     }
 
+    public Optional<Usuario> findByEmail(String email) {
+        List<Usuario> usuarios =  listarTodas();
+        for (Usuario usuario : usuarios) {
+            if (usuario.getEmail() != null && usuario.getEmail().equalsIgnoreCase(email)) {
+                return Optional.of(usuario);
+            }
+        }
+        return Optional.empty();
+    }
+
+
+
     @Override
     public Usuario atualizar(Usuario usuario) {
         log.info("[REPOSITORY] Atualizando Usuario em memória: " + usuario.getId());
