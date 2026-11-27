@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Cria e valida os tokens JWT. O token é assinado (HMAC256) com um segredo que só o servidor
@@ -31,24 +32,27 @@ public class TokenService {
         this.validade = Duration.ofHours(expiracaoHoras);
     }
 
-    // O "subject" guarda o e-mail, que é o login do usuário
+    // O "subject" guarda o id do usuário. Diferente do e-mail, o id nunca muda nem é reaproveitado,
+    // então o token de um usuário removido não vale para uma conta nova
     public String gerarToken(Usuario usuario) {
         return JWT.create()
                 .withIssuer(EMISSOR)
-                .withSubject(usuario.getUsername())
+                .withSubject(usuario.getId().toString())
                 .withExpiresAt(Instant.now().plus(validade))
                 .sign(algoritmo);
     }
 
-    // Devolve o e-mail contido no token, ou vazio se ele for inválido, adulterado ou expirado
-    public Optional<String> validarToken(String token) {
+    // Devolve o id contido no token, ou vazio se ele for inválido, adulterado ou expirado
+    public Optional<UUID> validarToken(String token) {
         try {
-            return Optional.ofNullable(JWT.require(algoritmo)
+            var subject = JWT.require(algoritmo)
                     .withIssuer(EMISSOR)
                     .build()
                     .verify(token)
-                    .getSubject());
-        } catch (JWTVerificationException e) {
+                    .getSubject();
+            return Optional.ofNullable(subject).map(UUID::fromString);
+        } catch (JWTVerificationException | IllegalArgumentException e) {
+            // IllegalArgumentException: o subject não é um UUID
             return Optional.empty();
         }
     }

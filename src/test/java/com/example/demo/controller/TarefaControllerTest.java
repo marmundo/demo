@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.exception.TratadorDeExcecoes;
 import com.example.demo.repository.TarefaRepository;
 import com.example.demo.service.TarefaService;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -20,6 +22,7 @@ class TarefaControllerTest {
 
     private final MockMvc mockMvc = MockMvcBuilders
             .standaloneSetup(new TarefaController(new TarefaService(new TarefaRepository())))
+            .setControllerAdvice(new TratadorDeExcecoes())
             .build();
 
     @Test
@@ -67,6 +70,32 @@ class TarefaControllerTest {
         atualizarPrimeiraTarefa("""
                 {"titulo": "Estudar Spring Boot", "concluida": false}
                 """)
+                .andExpect(jsonPath("$.concluida").value(false));
+    }
+
+    @Test
+    void mantemTituloQuandoOmitidoNaAtualizacao() throws Exception {
+        criarTarefa();
+
+        atualizarPrimeiraTarefa("""
+                {"concluida": true}
+                """)
+                .andExpect(jsonPath("$.titulo").value("Estudar Spring Boot"));
+    }
+
+    @Test
+    void recusaTituloEmBrancoSemAlterarATarefa() throws Exception {
+        criarTarefa();
+
+        mockMvc.perform(put("/tarefas/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"titulo": " ", "concluida": true}
+                                """))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(get("/tarefas/1"))
+                .andExpect(jsonPath("$.titulo").value("Estudar Spring Boot"))
                 .andExpect(jsonPath("$.concluida").value(false));
     }
 

@@ -95,8 +95,15 @@ public class TarefaService {
         Tarefa tarefaExistente = repository.buscarPorId(id)
                 .orElseThrow(() -> new TarefaNaoEncontradaException(id));
 
-        // Atualiza os campos da tarefa existente com os valores do DTO
-        tarefaExistente.setTitulo(dto.titulo());
+        // Valida antes de alterar: o repositório em memória guarda este mesmo objeto
+        if (dto.titulo() != null && dto.titulo().isBlank()) {
+            throw new IllegalArgumentException("O título da tarefa não pode ser vazio.");
+        }
+
+        // Atualiza o título se fornecido; caso contrário, mantém o existente
+        if (dto.titulo() != null) {
+            tarefaExistente.setTitulo(dto.titulo());
+        }
         // Se o DTO tiver prioridade, atualiza; caso contrário, mantém a existente
         if (dto.prioridade() != null) {
             tarefaExistente.setPrioridade(dto.prioridade());

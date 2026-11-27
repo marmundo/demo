@@ -141,6 +141,25 @@ class SegurancaTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void tokenDeUsuarioRemovidoNaoValeParaNovaContaComMesmoEmail() throws Exception {
+        var tokenAntigo = tokenDeUsuarioComum("reuso@exemplo.com");
+        repository.deletar(repository.findByEmail("reuso@exemplo.com").orElseThrow().getId());
+        repository.salvar(new Usuario("Outra pessoa", "reuso@exemplo.com", "hash-irrelevante", Perfil.ADMIN));
+
+        mockMvc.perform(get("/usuarios").header(HttpHeaders.AUTHORIZATION, tokenAntigo))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void tokenContinuaValendoDepoisDaTrocaDeEmail() throws Exception {
+        var token = tokenDeUsuarioComum("antes@exemplo.com");
+        repository.findByEmail("antes@exemplo.com").orElseThrow().setEmail("depois@exemplo.com");
+
+        mockMvc.perform(get("/tarefas").header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk());
+    }
+
     private ResultActions enviar(String rota, String json) throws Exception {
         return mockMvc.perform(post(rota).contentType(MediaType.APPLICATION_JSON).content(json));
     }

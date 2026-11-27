@@ -5,9 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Map;
 
@@ -60,6 +62,22 @@ public class TratadorDeExcecoes {
     public ResponseEntity<Map<String, String>> naoAutenticado(AuthenticationException e) {
         log.warn("[ERRO] Falha de autenticação: {}", e.getMessage());
         return resposta(HttpStatus.UNAUTHORIZED, "E-mail ou senha inválidos.");
+    }
+
+    // 404: nenhuma rota corresponde à URL
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Map<String, String>> rotaInexistente(NoResourceFoundException e) {
+        log.warn("[ERRO] {}", e.getMessage());
+        return resposta(HttpStatus.NOT_FOUND, "Recurso não encontrado.");
+    }
+
+    // 405: a URL existe, mas não aceita esse verbo HTTP. O header Allow informa os aceitos
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Map<String, String>> metodoNaoPermitido(HttpRequestMethodNotSupportedException e) {
+        log.warn("[ERRO] {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .headers(e.getHeaders())
+                .body(Map.of("erro", "Método não permitido."));
     }
 
     // 500: qualquer erro inesperado; o detalhe fica só no log

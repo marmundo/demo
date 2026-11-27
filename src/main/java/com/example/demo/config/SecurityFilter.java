@@ -40,7 +40,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (cabecalho != null && cabecalho.startsWith(PREFIXO)) {
             tokenService.validarToken(cabecalho.substring(PREFIXO.length()))
-                    .flatMap(usuarioRepository::findByEmail)
+                    .flatMap(usuarioRepository::buscarPorId)
                     .ifPresent(usuario -> {
                         var autenticacao = new UsernamePasswordAuthenticationToken(
                                 usuario, null, usuario.getAuthorities());
