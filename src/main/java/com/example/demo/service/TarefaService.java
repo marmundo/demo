@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.TaskCreateRequestDTO;
 import com.example.demo.dto.TaskRequestDTO;
 import com.example.demo.dto.TaskResponseDTO;
 import com.example.demo.exception.TarefaNaoEncontradaException;
@@ -32,7 +33,7 @@ public class TarefaService {
 
 
     // Cria uma tarefa a partir do DTO de entrada
-    public TaskResponseDTO criar(TaskRequestDTO dto) {
+    public TaskResponseDTO criar(TaskCreateRequestDTO dto) {
         String titulo=dto.titulo();
         Tarefa tarefa = new Tarefa();
         tarefa.setId(sequencia.incrementAndGet());

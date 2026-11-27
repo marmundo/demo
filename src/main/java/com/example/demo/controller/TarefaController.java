@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.TaskCreateRequestDTO;
 import com.example.demo.dto.TaskRequestDTO;
 import com.example.demo.dto.TaskResponseDTO;
 import com.example.demo.service.TarefaService;
@@ -36,10 +37,10 @@ public class TarefaController {
     }
 
     // POST /tarefas -> cria uma tarefa.
-    // @RequestBody converte o JSON do corpo da requisição em um TaskRequestDTO.
+    // @RequestBody converte o JSON do corpo da requisição em um TaskCreateRequestDTO.
     // Responde com 201 (Created) e a tarefa criada no corpo.
     @PostMapping
-    public ResponseEntity<TaskResponseDTO> criar(@RequestBody TaskRequestDTO corpo) {
+    public ResponseEntity<TaskResponseDTO> criar(@RequestBody TaskCreateRequestDTO corpo) {
      TaskResponseDTO criada=service.criar(corpo);
      return ResponseEntity.status(HttpStatus.CREATED).body(criada);
     }
