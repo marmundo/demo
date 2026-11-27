@@ -55,14 +55,14 @@ public class InMemoryUsuarioRepository implements UsuarioRepository{
     }
 
     // ofNullable: se o id não existir, map.get devolve null e o Optional fica vazio
-    public Optional<Usuario> buscarPorId(Long id) {
+    public Optional<Usuario> buscarPorId(UUID id) {
         log.info("[REPOSITORY] Buscando Usuario por id: " + id);
         return Optional.ofNullable(banco.get(id));
     }
 
     // Map.remove devolve o valor removido (ou null se não existia)
     @Override
-    public Optional<Usuario> deletar(Long id) {
+    public Optional<Usuario> deletar(UUID id) {
         System.out.println("[REPOSITORY] Removendo Usuario por id: " + id);
         return Optional.ofNullable(banco.remove(id));
     }

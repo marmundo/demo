@@ -4,6 +4,7 @@ import com.example.demo.model.Usuario;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Contrato (interface) de acesso aos dados de Usuario.
@@ -16,8 +17,8 @@ import java.util.Optional;
 public interface UsuarioRepository {
     public Usuario salvar(Usuario usuario);
     public List<Usuario> listarTodas();
-    public Optional<Usuario> buscarPorId(Long id);
-    public Optional<Usuario> deletar(Long id);
+    public Optional<Usuario> buscarPorId(UUID id);
+    public Optional<Usuario> deletar(UUID id);
     public Usuario atualizar(Usuario usuario);
     public Optional<Usuario> findByEmail(String email);
 }

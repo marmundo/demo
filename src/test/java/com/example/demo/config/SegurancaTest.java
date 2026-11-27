@@ -94,6 +94,26 @@ class SegurancaTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void usuarioCriadoPeloAdministradorTemSenhaComHashEFazLogin() throws Exception {
+        var admin = repository.findByEmail("admin@exemplo.com").orElseThrow();
+
+        mockMvc.perform(post("/usuarios")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenService.gerarToken(admin))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"nome": "Novo", "email": "novo@exemplo.com", "senha": "senha-do-novo", "perfil": "USER"}
+                                """))
+                .andExpect(status().isCreated());
+
+        assertThat(repository.findByEmail("novo@exemplo.com").orElseThrow().getPassword())
+                .isNotEqualTo("senha-do-novo");
+        enviar("/auth/login", """
+                {"email": "novo@exemplo.com", "senha": "senha-do-novo"}
+                """)
+                .andExpect(status().isOk());
+    }
+
     private ResultActions enviar(String rota, String json) throws Exception {
         return mockMvc.perform(post(rota).contentType(MediaType.APPLICATION_JSON).content(json));
     }
