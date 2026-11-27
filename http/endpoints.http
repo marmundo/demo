@@ -1,12 +1,22 @@
 # Requisições para a extensão REST Client do VS Code.
 # As rotas de tarefas exigem token: envie antes "Registrar usuário" e depois "Login".
 # Os dados ficam em memória, então repita os dois passos sempre que a aplicação reiniciar.
+#
+# As rotas /usuarios exigem um administrador, que só existe se a aplicação for iniciada assim:
+#   ADMIN_EMAIL=admin@exemplo.com ADMIN_SENHA=senha-do-admin \
+#     mvn spring-boot:run -Dspring-boot.run.profiles=dev -Dsentry.skip=true
+# Depois envie "Login do administrador". A senha abaixo serve apenas para desenvolvimento local:
+# se usar outra, ajuste @adminSenha e não faça commit dela.
 
 @host = http://localhost:8080
 @email = aluno@exemplo.com
 @senha = senha-de-exemplo
-# Preenchido com a resposta da requisição "login"
+@adminEmail = admin@exemplo.com
+@adminSenha = senha-do-admin
+# Preenchidos com as respostas das requisições "login", "loginAdmin" e "novoUsuario"
 @token = {{login.response.body.$.token}}
+@tokenAdmin = {{loginAdmin.response.body.$.token}}
+@usuarioId = {{novoUsuario.response.body.$.id}}
 
 ### Registrar usuário (201; 409 se o e-mail já estiver cadastrado)
 POST {{host}}/auth/registrar
@@ -124,3 +134,113 @@ Authorization: Bearer {{token}}
 ### Listar tarefas concluídas (200)
 GET {{host}}/tarefas/concluidos
 Authorization: Bearer {{token}}
+
+###
+
+### Login do administrador (200): guarda o token usado nas rotas de usuários
+# @name loginAdmin
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "senha": "{{adminSenha}}"
+}
+
+###
+
+### Listar usuários com token de usuário comum (esperado: 403)
+GET {{host}}/usuarios
+Authorization: Bearer {{token}}
+
+###
+
+### Criar usuário (201): guarda o id usado nas requisições seguintes
+# Reenviar sem remover o usuário responde 409 e faz o id guardado se perder
+# @name novoUsuario
+POST {{host}}/usuarios
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{
+  "nome": "Novo Usuário",
+  "email": "novo@exemplo.com",
+  "senha": "senha-do-novo",
+  "perfil": "USER"
+}
+
+###
+
+### Criar usuário com e-mail repetido (esperado: 409)
+POST {{host}}/usuarios
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{
+  "nome": "Repetido",
+  "email": "novo@exemplo.com",
+  "senha": "senha-do-novo",
+  "perfil": "USER"
+}
+
+###
+
+### Criar usuário com senha de menos de 8 caracteres (esperado: 400)
+POST {{host}}/usuarios
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{
+  "nome": "Senha Curta",
+  "email": "curta@exemplo.com",
+  "senha": "1234567",
+  "perfil": "USER"
+}
+
+###
+
+### Criar usuário sem perfil (esperado: 400)
+POST {{host}}/usuarios
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{
+  "nome": "Sem Perfil",
+  "email": "semperfil@exemplo.com",
+  "senha": "senha-qualquer"
+}
+
+###
+
+### Listar usuários (200)
+GET {{host}}/usuarios
+Authorization: Bearer {{tokenAdmin}}
+
+###
+
+### Buscar usuário por id (200)
+GET {{host}}/usuarios/{{usuarioId}}
+Authorization: Bearer {{tokenAdmin}}
+
+###
+
+### Atualizar usuário (200): os campos omitidos mantêm o valor atual
+PUT {{host}}/usuarios/{{usuarioId}}
+Authorization: Bearer {{tokenAdmin}}
+Content-Type: application/json
+
+{
+  "nome": "Nome Atualizado"
+}
+
+###
+
+### Remover usuário (200)
+DELETE {{host}}/usuarios/{{usuarioId}}
+Authorization: Bearer {{tokenAdmin}}
+
+###
+
+### Buscar usuário removido (esperado: 404)
+GET {{host}}/usuarios/{{usuarioId}}
+Authorization: Bearer {{tokenAdmin}}
