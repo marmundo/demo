@@ -11,11 +11,13 @@ import com.example.demo.model.Prioridade;
  *
  * "record" (Java 16+) gera automaticamente construtor, getters (titulo(), descricao()...),
  * equals, hashCode e toString. É imutável, ideal para DTOs.
+ *
+ * "concluida" é Boolean (e não boolean) para aceitar null quando o cliente omite o campo.
  */
 public record TaskRequestDTO(
         String titulo,
         String descricao,
         LocalDate prazo,
         Prioridade prioridade,
-        boolean concluida
+        Boolean concluida
 ) {}

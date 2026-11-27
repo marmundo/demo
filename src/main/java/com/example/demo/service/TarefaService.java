@@ -101,8 +101,10 @@ public class TarefaService {
         if (dto.prioridade() != null) {
             tarefaExistente.setPrioridade(dto.prioridade());
         }
-        // Atualiza o status de conclusão se fornecido
-        tarefaExistente.setConcluida(dto.concluida());
+        // Atualiza o status de conclusão se fornecido; caso contrário, mantém o existente
+        if (dto.concluida() != null) {
+            tarefaExistente.setConcluida(dto.concluida());
+        }
 
         Tarefa atualizada = repository.salvar(tarefaExistente);
         return toResponseDTO(atualizada);
