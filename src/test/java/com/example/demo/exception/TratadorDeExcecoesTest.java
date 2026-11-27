@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -13,6 +14,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,5 +50,15 @@ class TratadorDeExcecoesTest {
                 .andExpect(header().string(HttpHeaders.ALLOW,
                         allOf(containsString("GET"), containsString("PUT"))))
                 .andExpect(jsonPath("$.erro").value("Método não permitido."));
+    }
+
+    @Test
+    void tipoDeConteudoNaoSuportadoRespondeComOsTiposAceitos() throws Exception {
+        mockMvc.perform(post("/tarefas")
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content("Estudar Spring Boot"))
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(header().string(HttpHeaders.ACCEPT, containsString(MediaType.APPLICATION_JSON_VALUE)))
+                .andExpect(jsonPath("$.erro").value("Tipo de conteúdo não suportado."));
     }
 }

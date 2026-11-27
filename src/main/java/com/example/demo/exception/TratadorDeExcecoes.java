@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -78,6 +79,15 @@ public class TratadorDeExcecoes {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .headers(e.getHeaders())
                 .body(Map.of("erro", "Método não permitido."));
+    }
+
+    // 415: o corpo veio em um formato que a rota não lê. O header Accept informa os aceitos
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<Map<String, String>> tipoDeConteudoNaoSuportado(HttpMediaTypeNotSupportedException e) {
+        log.warn("[ERRO] {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .headers(e.getHeaders())
+                .body(Map.of("erro", "Tipo de conteúdo não suportado."));
     }
 
     // 500: qualquer erro inesperado; o detalhe fica só no log
