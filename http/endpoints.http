@@ -1,10 +1,51 @@
+# Requisições para a extensão REST Client do VS Code.
+# As rotas de tarefas exigem token: envie antes "Registrar usuário" e depois "Login".
+# Os dados ficam em memória, então repita os dois passos sempre que a aplicação reiniciar.
+
+@host = http://localhost:8080
+@email = aluno@exemplo.com
+@senha = senha-de-exemplo
+# Preenchido com a resposta da requisição "login"
+@token = {{login.response.body.$.token}}
+
+### Registrar usuário (201; 409 se o e-mail já estiver cadastrado)
+POST {{host}}/auth/registrar
+Content-Type: application/json
+
+{
+  "nome": "Aluno",
+  "email": "{{email}}",
+  "senha": "{{senha}}"
+}
+
+###
+
+### Login (200): guarda o token usado nas requisições seguintes
+# @name login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "senha": "{{senha}}"
+}
+
+###
+
+### Listar tarefas sem token (esperado: 403)
+GET {{host}}/tarefas
+
+###
+
 ### Listar todas as tarefas (200)
-GET http://localhost:8080/tarefas
+GET {{host}}/tarefas
+Authorization: Bearer {{token}}
 
 ###
 
 ### Criar tarefa (201)
-POST http://localhost:8080/tarefas
+POST {{host}}/tarefas
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -17,7 +58,8 @@ Content-Type: application/json
 ###
 
 ### Criar segunda tarefa (201)
-POST http://localhost:8080/tarefas
+POST {{host}}/tarefas
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -29,7 +71,8 @@ Content-Type: application/json
 ###
 
 ### Criar tarefa sem descrição nem prazo (valida campos opcionais)
-POST http://localhost:8080/tarefas
+POST {{host}}/tarefas
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -39,7 +82,8 @@ Content-Type: application/json
 ###
 
 ### Criar tarefa com corpo vazio (valida tratamento de dados inválidos)
-POST http://localhost:8080/tarefas
+POST {{host}}/tarefas
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {}
@@ -47,7 +91,8 @@ Content-Type: application/json
 ###
 
 ### Criar tarefa com data em formato inválido (esperado: 400)
-POST http://localhost:8080/tarefas
+POST {{host}}/tarefas
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -59,19 +104,23 @@ Content-Type: application/json
 ###
 
 ### Buscar tarefa por id existente (200)
-GET http://localhost:8080/tarefas/1
+GET {{host}}/tarefas/1
+Authorization: Bearer {{token}}
 
 ###
 
 ### Buscar tarefa por id inexistente (esperado: 404)
-GET http://localhost:8080/tarefas/9999
+GET {{host}}/tarefas/9999
+Authorization: Bearer {{token}}
 
 ###
 
 ### Buscar tarefa com id não numérico (esperado: 400)
-GET http://localhost:8080/tarefas/abc
+GET {{host}}/tarefas/abc
+Authorization: Bearer {{token}}
 
 ###
 
 ### Listar tarefas concluídas (200)
-GET http://localhost:8080/tarefas/concluidos
+GET {{host}}/tarefas/concluidos
+Authorization: Bearer {{token}}

@@ -3,6 +3,7 @@ package com.example.demo.config;
 import com.example.demo.model.Perfil;
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.UsuarioRepository;
+import com.example.demo.service.UsuarioService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -39,6 +40,12 @@ public class AdminInicial implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (email.isBlank() || senha.isBlank()) {
             log.info("ADMIN_EMAIL e ADMIN_SENHA não definidas: nenhum administrador foi criado");
+            return;
+        }
+        // A aplicação continua subindo; a senha não é escrita no log
+        if (senha.length() < UsuarioService.TAMANHO_MINIMO_SENHA) {
+            log.warn("ADMIN_SENHA tem menos de {} caracteres: nenhum administrador foi criado",
+                    UsuarioService.TAMANHO_MINIMO_SENHA);
             return;
         }
         if (repository.findByEmail(email).isEmpty()) {

@@ -25,7 +25,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j 
 @Service
 public class UsuarioService {
-    private static final int TAMANHO_MINIMO_SENHA = 8;
+    // Pública porque o AdminInicial aplica a mesma regra
+    public static final int TAMANHO_MINIMO_SENHA = 8;
 
     // O atributo usa a interface (abstração); o construtor recebe a implementação concreta
     private final UsuarioRepository repository;
