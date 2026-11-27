@@ -36,6 +36,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Login e cadastro precisam ser públicos; senão ninguém conseguiria obter o primeiro token
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/registrar").permitAll()
+                        // A gestão de usuários permite definir perfis, por isso é exclusiva do ADMIN
+                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
                         // Só quem tem o perfil ADMIN pode criar produtos
                         .requestMatchers(HttpMethod.POST, "/produtos").hasRole("ADMIN")
                         // Todo o resto exige apenas estar autenticado. A ordem das regras importa: vale a primeira que casar

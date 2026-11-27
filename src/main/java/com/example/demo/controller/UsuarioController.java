@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.UsuarioResponseDTO;
 import com.example.demo.dto.UsuarioResquestDTO;
-import com.example.demo.model.Usuario;
 import com.example.demo.service.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,21 +41,21 @@ public class UsuarioController {
 
     // GET /usuarios/{id} -> busca um usuário; @PathVariable captura o {id} da URL
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscar(@PathVariable Long id) {
+    public ResponseEntity<UsuarioResponseDTO> buscar(@PathVariable Long id) {
         log.info("[CONTROLLER] Requisição recebida: GET /tarefas/" + id);
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     // PUT /usuarios/{id} -> atualiza um usuário (id vem da URL, novos dados vêm no corpo JSON)
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody UsuarioResquestDTO corpo) {
+    public ResponseEntity<UsuarioResponseDTO> atualizar(@PathVariable Long id, @RequestBody UsuarioResquestDTO corpo) {
         log.info("[CONTROLLER] Requisição recebida: PUT /tarefas/" + id);
         return ResponseEntity.ok(service.atualizar(id,new UsuarioResquestDTO( corpo.nome(), corpo.email(), corpo.senha(),corpo.perfil())));
     }
 
     // DELETE /usuarios/{id} -> remove o usuário e devolve o registro removido
     @DeleteMapping("/{id}")
-    public ResponseEntity<Usuario> deletar(@PathVariable Long id) {
+    public ResponseEntity<UsuarioResponseDTO> deletar(@PathVariable Long id) {
         log.info("[CONTROLLER] Requisição recebida: DELETE /tarefas/" + id);
         return ResponseEntity.ok(service.deletar(id));
     }

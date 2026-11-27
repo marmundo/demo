@@ -59,24 +59,27 @@ public class UsuarioService {
     }
 
     // Lança exceção se o usuário não existir
-    public Usuario buscarPorId(Long id) {
+    public UsuarioResponseDTO buscarPorId(Long id) {
         log.info("[SERVICE] Processando busca por id: " + id);
         return repository.buscarPorId(id)
+                .map(this::toResponseDTO)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));
     }
 
-    public Usuario atualizar(Long id, UsuarioResquestDTO usuarioResquestDTO) {
+    public UsuarioResponseDTO atualizar(Long id, UsuarioResquestDTO usuarioResquestDTO) {
         log.info("[SERVICE] Processando atualização por id: " + id);
         Usuario usuarioExistente = repository.buscarPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));
         usuarioExistente.setNome(usuarioResquestDTO.nome());
         usuarioExistente.setEmail(usuarioResquestDTO.email());
-        return repository.atualizar(usuarioExistente);
+        return toResponseDTO(repository.atualizar(usuarioExistente));
     }
 
     // Remove e devolve o usuário; se o id não existir, lança exceção
-    public Usuario deletar(Long id) {
+    public UsuarioResponseDTO deletar(Long id) {
         log.info("[SERVICE] Processando deleção por id: " + id);
-        return (Usuario) repository.deletar(id).orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));
+        return repository.deletar(id)
+                .map(this::toResponseDTO)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario não encontrada: " + id));
     }
 }

@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.LoginRequestDTO;
 import com.example.demo.dto.RegistroRequestDTO;
 import com.example.demo.dto.TokenResponseDTO;
+import com.example.demo.model.Perfil;
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.service.TokenService;
@@ -57,7 +58,8 @@ public class AuthController {
         }
         // BCrypt é uma via de mão única: não dá para recuperar a senha original a partir do hash
         var senhaHash = passwordEncoder.encode(dados.senha());
-        usuarioRepository.salvar(new Usuario(dados.nome(), dados.email(), senhaHash, dados.perfil()));
+        // Quem se cadastra sozinho é sempre um usuário comum
+        usuarioRepository.salvar(new Usuario(dados.nome(), dados.email(), senhaHash, Perfil.USER));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
