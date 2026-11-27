@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 /**
  * Cria o primeiro administrador quando a aplicação inicia. Como o cadastro público só gera
  * usuários comuns, este é o caminho para existir um ADMIN.
- * E-mail e senha vêm das variáveis de ambiente ADMIN_EMAIL e ADMIN_SENHA, para que
- * nenhuma credencial fique gravada no código.
+ * E-mail e senha vêm das variáveis de ambiente ADMIN_EMAIL e ADMIN_SENHA. Sem elas, valem
+ * os padrões do application.properties, destinados apenas ao desenvolvimento local.
  */
 @Slf4j
 @Component

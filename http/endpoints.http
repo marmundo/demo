@@ -2,11 +2,10 @@
 # As rotas de tarefas exigem token: envie antes "Registrar usuário" e depois "Login".
 # Os dados ficam em memória, então repita os dois passos sempre que a aplicação reiniciar.
 #
-# As rotas /usuarios exigem um administrador, que só existe se a aplicação for iniciada assim:
-#   ADMIN_EMAIL=admin@exemplo.com ADMIN_SENHA=senha-do-admin \
-#     mvn spring-boot:run -Dspring-boot.run.profiles=dev -Dsentry.skip=true
-# Depois envie "Login do administrador". A senha abaixo serve apenas para desenvolvimento local:
-# se usar outra, ajuste @adminSenha e não faça commit dela.
+# As rotas /usuarios exigem um administrador, criado quando a aplicação inicia (./mvnw spring-boot:run).
+# Envie "Login do administrador" para obter o token. A senha abaixo é o padrão do application.properties
+# e serve apenas para desenvolvimento local. Se definir ADMIN_EMAIL ou ADMIN_SENHA com outros valores,
+# ajuste @adminEmail ou @adminSenha e não faça commit da senha.
 
 @host = http://localhost:8080
 @email = aluno@exemplo.com
