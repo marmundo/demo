@@ -77,6 +77,18 @@ class SegurancaTest {
     }
 
     @Test
+    void registroPublicoExigeSenhaComPeloMenosOitoCaracteres() throws Exception {
+        var corpo = """
+                {"nome": "Bia", "email": "bia@exemplo.com", "senha": "%s"}
+                """;
+
+        enviar("/auth/registrar", corpo.formatted("1234567")).andExpect(status().isBadRequest());
+        assertThat(repository.findByEmail("bia@exemplo.com")).isEmpty();
+
+        enviar("/auth/registrar", corpo.formatted("12345678")).andExpect(status().isCreated());
+    }
+
+    @Test
     void usuarioComumNaoAcessaRotasDeUsuarios() throws Exception {
         var token = tokenDeUsuarioComum("comum@exemplo.com");
 

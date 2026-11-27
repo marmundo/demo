@@ -25,6 +25,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j 
 @Service
 public class UsuarioService {
+    private static final int TAMANHO_MINIMO_SENHA = 8;
+
     // O atributo usa a interface (abstração); o construtor recebe a implementação concreta
     private final UsuarioRepository repository;
     // Gerador de ids sequenciais, seguro para uso concorrente
@@ -90,6 +92,7 @@ public class UsuarioService {
         recusarEmBranco("nome", dto.nome());
         recusarEmBranco("email", dto.email());
         recusarEmBranco("senha", dto.senha());
+        recusarSenhaCurta(dto.senha());
         if (dto.email() != null && emailPertenceAOutro(dto.email(), id)) {
             throw new EmailJaCadastradoException();
         }
@@ -116,6 +119,15 @@ public class UsuarioService {
         exigir("senha", senha);
         recusarEmBranco("email", email);
         recusarEmBranco("senha", senha);
+        recusarSenhaCurta(senha);
+    }
+
+    // Senha omitida (null) é aceita aqui: na atualização, significa manter a atual
+    private void recusarSenhaCurta(String senha) {
+        if (senha != null && senha.length() < TAMANHO_MINIMO_SENHA) {
+            throw new IllegalArgumentException(
+                    "A senha deve ter pelo menos " + TAMANHO_MINIMO_SENHA + " caracteres.");
+        }
     }
 
     private void exigir(String campo, Object valor) {

@@ -112,7 +112,7 @@ class UsuarioControllerTest {
         mockMvc.perform(post("/usuarios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nome": "Cópia", "email": "MARIA@exemplo.com", "senha": "x", "perfil": "USER"}
+                                {"nome": "Cópia", "email": "MARIA@exemplo.com", "senha": "senha-valida", "perfil": "USER"}
                                 """))
                 .andExpect(status().isConflict());
 
@@ -135,16 +135,49 @@ class UsuarioControllerTest {
     @Test
     void criacaoExigeEmailSenhaEPerfil() throws Exception {
         for (String corpo : new String[]{
-                "{\"nome\": \"Ana\", \"senha\": \"x\", \"perfil\": \"USER\"}",
-                "{\"nome\": \"Ana\", \"email\": \" \", \"senha\": \"x\", \"perfil\": \"USER\"}",
+                "{\"nome\": \"Ana\", \"senha\": \"senha-valida\", \"perfil\": \"USER\"}",
+                "{\"nome\": \"Ana\", \"email\": \" \", \"senha\": \"senha-valida\", \"perfil\": \"USER\"}",
                 "{\"nome\": \"Ana\", \"email\": \"ana@exemplo.com\", \"perfil\": \"USER\"}",
                 "{\"nome\": \"Ana\", \"email\": \"ana@exemplo.com\", \"senha\": \"\", \"perfil\": \"USER\"}",
-                "{\"nome\": \"Ana\", \"email\": \"ana@exemplo.com\", \"senha\": \"x\"}"}) {
+                "{\"nome\": \"Ana\", \"email\": \"ana@exemplo.com\", \"senha\": \"senha-valida\"}"}) {
             mockMvc.perform(post("/usuarios").contentType(MediaType.APPLICATION_JSON).content(corpo))
                     .andExpect(status().isBadRequest());
         }
 
         assertThat(repository.listarTodas()).containsExactly(usuario);
+    }
+
+    @Test
+    void criacaoExigeSenhaComPeloMenosOitoCaracteres() throws Exception {
+        var corpo = """
+                {"nome": "Ana", "email": "ana@exemplo.com", "senha": "%s", "perfil": "USER"}
+                """;
+
+        mockMvc.perform(post("/usuarios").contentType(MediaType.APPLICATION_JSON)
+                        .content(corpo.formatted("1234567")))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value("A senha deve ter pelo menos 8 caracteres."));
+        assertThat(repository.listarTodas()).containsExactly(usuario);
+
+        mockMvc.perform(post("/usuarios").contentType(MediaType.APPLICATION_JSON)
+                        .content(corpo.formatted("12345678")))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void atualizacaoExigeSenhaComPeloMenosOitoCaracteres() throws Exception {
+        atualizar(usuario, """
+                {"nome": "Outro", "senha": "1234567"}
+                """)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value("A senha deve ter pelo menos 8 caracteres."));
+        assertThat(usuario.getNome()).isEqualTo("Maria");
+        assertThat(usuario.getPassword()).isEqualTo("hash-secreto");
+
+        atualizar(usuario, """
+                {"senha": "12345678"}
+                """)
+                .andExpect(status().isOk());
     }
 
     @Test
