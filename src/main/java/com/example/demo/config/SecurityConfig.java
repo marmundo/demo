@@ -1,7 +1,5 @@
 package com.example.demo.config;
 
-import jakarta.servlet.Filter;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,12 +15,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration       // classe que declara beans de configuração
 @EnableWebSecurity   // ativa a configuração de segurança web personalizada
-public class SecurityConfig<SecurityFilter> {
+public class SecurityConfig {
 
     // Nosso filtro que lê o token JWT (veja a Etapa 12)
     private final SecurityFilter securityFilter;
 
-    public SecurityConfig(@Qualifier("") SecurityFilter securityFilter) {
+    public SecurityConfig(SecurityFilter securityFilter) {
         this.securityFilter = securityFilter;
     }
 
@@ -44,7 +42,7 @@ public class SecurityConfig<SecurityFilter> {
                         .anyRequest().authenticated())
                 // Nosso filtro precisa rodar ANTES do filtro padrão de login por formulário,
                 // para já deixar o usuário identificado quando as regras acima forem avaliadas
-                .addFilterBefore((Filter) securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
