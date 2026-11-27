@@ -21,10 +21,17 @@ import java.util.Map;
 public class TratadorDeExcecoes {
 
     // 404: recurso não existe
-    @ExceptionHandler(TarefaNaoEncontradaException.class)
-    public ResponseEntity<Map<String, String>> naoEncontrada(TarefaNaoEncontradaException e) {
+    @ExceptionHandler({TarefaNaoEncontradaException.class, UsuarioNaoEncontradoException.class})
+    public ResponseEntity<Map<String, String>> naoEncontrada(RuntimeException e) {
         log.warn("[ERRO] {}", e.getMessage());
         return resposta(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    // 409: conflito com um recurso que já existe (o e-mail é o login, então não pode repetir)
+    @ExceptionHandler(EmailJaCadastradoException.class)
+    public ResponseEntity<Map<String, String>> emailRepetido(EmailJaCadastradoException e) {
+        log.warn("[ERRO] {}", e.getMessage());
+        return resposta(HttpStatus.CONFLICT, e.getMessage());
     }
 
     // 400: regra de negócio violada (ex.: título vazio)
