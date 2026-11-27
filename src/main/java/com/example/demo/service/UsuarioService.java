@@ -41,12 +41,8 @@ public class UsuarioService {
 
     // Cria o usuário: o id é gerado aqui, nunca recebido do cliente
     public UsuarioResponseDTO criar(UsuarioResquestDTO dto) {
-        // Sem estes dados o usuário não conseguiria fazer login
-        exigir("email", dto.email());
-        exigir("senha", dto.senha());
+        validarCredenciais(dto.email(), dto.senha());
         exigir("perfil", dto.perfil());
-        recusarEmBranco("email", dto.email());
-        recusarEmBranco("senha", dto.senha());
         if (repository.findByEmail(dto.email()).isPresent()) {
             throw new EmailJaCadastradoException();
         }
@@ -111,6 +107,15 @@ public class UsuarioService {
             usuarioExistente.setPerfil(dto.perfil());
         }
         return toResponseDTO(repository.atualizar(usuarioExistente));
+    }
+
+    // Sem e-mail e senha o usuário não conseguiria fazer login.
+    // Usado aqui e no cadastro público (AuthController)
+    public void validarCredenciais(String email, String senha) {
+        exigir("email", email);
+        exigir("senha", senha);
+        recusarEmBranco("email", email);
+        recusarEmBranco("senha", senha);
     }
 
     private void exigir(String campo, Object valor) {

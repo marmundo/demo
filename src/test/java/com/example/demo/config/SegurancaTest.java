@@ -62,6 +62,21 @@ class SegurancaTest {
     }
 
     @Test
+    void registroPublicoExigeEmailESenha() throws Exception {
+        var totalAntes = repository.listarTodas().size();
+
+        for (String corpo : new String[]{
+                "{\"nome\": \"Ana\", \"senha\": \"senha-qualquer\"}",
+                "{\"nome\": \"Ana\", \"email\": \" \", \"senha\": \"senha-qualquer\"}",
+                "{\"nome\": \"Ana\", \"email\": \"ana@exemplo.com\"}",
+                "{\"nome\": \"Ana\", \"email\": \"ana@exemplo.com\", \"senha\": \"\"}"}) {
+            enviar("/auth/registrar", corpo).andExpect(status().isBadRequest());
+        }
+
+        assertThat(repository.listarTodas()).hasSize(totalAntes);
+    }
+
+    @Test
     void usuarioComumNaoAcessaRotasDeUsuarios() throws Exception {
         var token = tokenDeUsuarioComum("comum@exemplo.com");
 

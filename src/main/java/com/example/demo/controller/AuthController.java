@@ -7,6 +7,7 @@ import com.example.demo.model.Perfil;
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.service.TokenService;
+import com.example.demo.service.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,15 +29,19 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     // Responsável por criar o JWT depois que o login der certo
     private final TokenService tokenService;
+    // Reaproveita no cadastro as regras de validação de usuários
+    private final UsuarioService usuarioService;
 
     public AuthController(AuthenticationManager authenticationManager,
                           UsuarioRepository usuarioRepository,
                           PasswordEncoder passwordEncoder,
-                          TokenService tokenService) {
+                          TokenService tokenService,
+                          UsuarioService usuarioService) {
         this.authenticationManager = authenticationManager;
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
+        this.usuarioService = usuarioService;
     }
 
     @PostMapping("/login")
@@ -52,6 +57,8 @@ public class AuthController {
 
     @PostMapping("/registrar")
     public ResponseEntity<Void> registrar(@RequestBody RegistroRequestDTO dados) {
+        // E-mail ou senha ausentes ou em branco: responde 400
+        usuarioService.validarCredenciais(dados.email(), dados.senha());
         // E-mail é o login, então não pode haver dois iguais: responde 409 (conflito)
         if (usuarioRepository.findByEmail(dados.email()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
